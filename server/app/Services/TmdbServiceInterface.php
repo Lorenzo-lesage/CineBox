@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Data\MovieData;
 use App\Data\GenreMediaListData;
+use App\Data\MovieData;
 
 interface TmdbServiceInterface
 {

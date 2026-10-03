@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\TmdbServiceInterface;
+use Illuminate\Http\Request;
 
 class GenreController extends Controller
 {
@@ -15,7 +15,7 @@ class GenreController extends Controller
     /**
      * Summary of index
      * Index of genres
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(string $type, Request $request)
@@ -27,7 +27,7 @@ class GenreController extends Controller
         // Filtriamo per rimuovere i generi che non hanno un ID per quel tipo
         // (es. 'Kids' non ha un ID movie, quindi lo nascondiamo se type=movie)
         $filtered = array_filter($genres, function ($genre) use ($type) {
-            return !is_null($genre[$type]);
+            return ! is_null($genre[$type]);
         });
 
         // Usiamo array_values per resettare le chiavi dell'array dopo il filtro

@@ -26,5 +26,5 @@ return [
         ['key' => 'reality',     'movie' => null,  'tv' => 10764, 'label' => 'Reality'],
         ['key' => 'soap',        'movie' => null,  'tv' => 10766, 'label' => 'Soap'],
         ['key' => 'talk',        'movie' => null,  'tv' => 10767, 'label' => 'Talk'],
-    ]
+    ],
 ];

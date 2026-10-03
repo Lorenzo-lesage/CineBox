@@ -7,6 +7,7 @@ use Exception;
 class TmdbApiException extends Exception
 {
     protected $statusCode;
+
     protected $apiResponse;
 
     public function __construct($message, $statusCode = 0, $apiResponse = null)
