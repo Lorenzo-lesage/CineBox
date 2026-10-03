@@ -4,11 +4,11 @@ Legend: `[ ]` todo · `[x]` done. Pace: ~10 h/week.
 
 ## Phase 0 — Setup & hygiene
 - [x] Align `dev` with `main`
-- [ ] Add `CLAUDE.md`, track `TODO.md`, remove legacy tool files
-- [ ] Protect `main` and `dev` on GitHub
-- [ ] Align `server/.env.example` with MySQL / Redis / Sanctum
-- [ ] Fix README (ports, setup, git workflow)
-- [ ] Install Larastan and configure Pint
+- [x] Add `CLAUDE.md`, track `TODO.md`, remove legacy tool files
+- [x] Protect `main` and `dev` on GitHub
+- [x] Align `server/.env.example` with MySQL / Redis / Sanctum
+- [x] Fix README (ports, setup, git workflow)
+- [x] Install Larastan and configure Pint
 
 ## Phase 1 — Backend consolidation
 - [ ] `MediaType` and `SortOption` enums; routes rewritten with enum binding, all under `v1`
