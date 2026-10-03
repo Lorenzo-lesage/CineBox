@@ -36,7 +36,3 @@ redis-data/
 **/storage/framework/views/*
 **/storage/logs/*
 
-repomix-output.xml
-.windsurf-rules
-TODO.md
-.openclawignore
