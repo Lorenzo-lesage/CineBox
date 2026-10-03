@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-
+use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\MovieController;
-use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\SearchController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +24,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])
         ->name('home');
 
-
     /*
     |--------------------------------------------------------------------------
     | Movies
@@ -40,8 +38,7 @@ Route::prefix('v1')->group(function () {
     });
 
     // Movie trailer
-    Route::get('/movies/{id}/trailer', [MovieController::class, 'trailer'])->name('movies.trailer');
-
+    Route::get('/{type}/{id}/trailer', [MovieController::class, 'trailer'])->name('movies.trailer');
 
     /*
     |--------------------------------------------------------------------------
@@ -51,15 +48,18 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('genres')->group(function () {
 
-        /// Index of genres
+        // / Index of genres
         Route::get('/Genres/{type}', [GenreController::class, 'index'])
             ->name('genres.index');
 
         // Movies by genre
-        Route::get('/{genreId}/movies', [GenreController::class, 'movies'])
+        Route::get('/{genreId}/{type}', [GenreController::class, 'movies'])
             ->name('genres.movies');
-    });
 
+        // Movies by genre paginated
+        Route::get('/{type}/{genreId}/paginated', [GenreController::class, 'paginatedMedia'])
+            ->name('genres.paginated');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +70,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/search', [SearchController::class, 'search'])
         ->name('search');
 });
-
 
 /*
 |--------------------------------------------------------------------------

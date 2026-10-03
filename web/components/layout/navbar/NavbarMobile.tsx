@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sheet";
 
 // Icons
-import { Settings, LogIn } from "lucide-react";
+import { Settings, LogIn, Search } from "lucide-react";
 
 // Logo
 import Logo from "@/public/images/Logo.png";
@@ -47,11 +47,11 @@ export function NavbarMobile() {
   */
 
   return (
-    <nav className="absolute top-0 w-full z-50 bg-transparent">
+    <nav className="fixed bottom-0 w-full z-50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 ">
+        <div className="flex items-center justify-between h-16">
           {/* Logo o Brand */}
-          <div className="flex-shrink-0 font-bold text-xl tracking-tight">
+          <div className="flex-shrink-0 font-bold text-xl tracking-tight flex">
             <Link
               href="/"
               className="hover:opacity-80 transition-opacity font-black text-white"
@@ -68,6 +68,14 @@ export function NavbarMobile() {
               />
             </Link>
           </div>
+          <Link
+            href="/search"
+            className={`${linkStyles} ${isLinkActive("/search") ? activeStyles : inactiveStyles}`}
+            style={{ textShadow: "0px 0px 2px rgb(32, 3, 3)" }}
+          >
+            <Search className="h-4 w-4 drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.5)" />
+          </Link>
+          <ThemeSwitcherMobile />
 
           <Sheet>
             <SheetTrigger>
@@ -120,9 +128,7 @@ export function NavbarMobile() {
                   </Link>
                 </SheetClose>
               </div>
-              <SheetFooter>
-                <ThemeSwitcherMobile />
-              </SheetFooter>
+              <SheetFooter></SheetFooter>
             </SheetContent>
           </Sheet>
         </div>

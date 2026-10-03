@@ -10,6 +10,9 @@ import MovieImage from "./MovieImage";
 // Icons
 import { Volume2, VolumeOff } from "lucide-react";
 
+// Logo
+import Logo from "@/public/images/Logo.png";
+
 // types
 import { MovieCardPlayerProps } from "@/types/components";
 
@@ -29,6 +32,7 @@ export function MovieCardPlayer({
   */
 
   const isMobile = useIsMobile();
+  const noMedia = !movie.poster_path && !movie.backdrop_path && !trailerKey;
 
   /*
   |--------------------------------------------------------------------------
@@ -42,26 +46,44 @@ export function MovieCardPlayer({
       <div
         className={cn(
           "relative w-full h-50 group",
-          rowStyle === "bigger" && "h-86",
+          rowStyle === "bigger" && "h-50 md:h-86 aspect-[2/3]",
         )}
       >
-        <MovieImage
-          src={`https://image.tmdb.org/t/p/w780${isMobile || rowStyle === "bigger" ? movie.poster_path : movie.backdrop_path || movie.poster_path}`}
-          alt={movie.title || movie.name || "Poster"}
-          className={cn(
-            "object-cover transition-opacity duration-500 z-10 w-full", // Aggiunto w-full
-            showVideo && !isMobile ? "opacity-0" : "opacity-100",
-            rowStyle === "bigger"
-              ? "h-86 md:h-86 aspect-[2/3] object-cover"
-              : "h-full object-cover",
-          )}
-        />
-        {/* Overlay gradient */}
-        <div className="absolute -bottom-1 inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
+        {noMedia ? (
+          <div
+            className={cn(
+              "relative w-full bg-background rounded-lg overflow-hidden",
+              rowStyle === "bigger" ? "h-50 md:h-86 aspect-[2/3]" : "h-full",
+            )}
+          >
+            <MovieImage
+              src={Logo.src}
+              alt={movie.title || movie.name || "Poster"}
+              className={cn(
+                "object-contain transition-opacity duration-500 z-10 w-full h-full opacity-30",
+              )}
+            />
+          </div>
+        ) : (
+          <MovieImage
+            src={`https://image.tmdb.org/t/p/w780${isMobile || rowStyle === "bigger" ? movie.poster_path : movie.backdrop_path || movie.poster_path}`}
+            alt={movie.title || movie.name || "Poster"}
+            className={cn(
+              "object-cover transition-opacity duration-500 z-10 w-full rounded-lg hover:rounded-t-lg hover:rounded-b-xs",
+              showVideo && !isMobile ? "opacity-0" : "opacity-100",
+              rowStyle === "bigger"
+                ? "h-50 md:h-86 aspect-[2/3] object-cover"
+                : "h-full object-cover",
+              noMedia && "bg-background",
+            )}
+          />
+        )}
+
+        <div className="absolute -bottom-0.5 inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none md:block hidden" />
 
         {/* Player Video at hover */}
         {showVideo && trailerKey && !isMobile && (
-          <div className="absolute inset-0 z-20 bg-black">
+          <div className="absolute inset-0 z-20 bg-black rounded-t-lg overflow-hidden">
             <div className="relative h-full w-full">
               <ReactPlayer
                 ref={playerRef}
@@ -82,12 +104,17 @@ export function MovieCardPlayer({
             </div>
           </div>
         )}
-        <div className="hidden group-hover:block absolute -bottom-10 z-50 w-full px-4 space-y-1">
+        <div
+          className={cn(
+            "hidden group-hover:block absolute -bottom-10 z-50 w-full h-10 px-4 space-y-1 bg-background rounded-b-lg",
+            rowStyle === "bigger" && "-bottom-13 h-12",
+          )}
+        >
           <p className="text-primary truncate">
             {movie.genres.map((genre) => genre).join(" - ")}
           </p>
           <p className="text-primary text-xs italic text-center">
-            {movie.release_date}
+            {movie?.release_date}
           </p>
         </div>
       </div>

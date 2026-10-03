@@ -1,146 +1,98 @@
 # CineBox
 
-CineBox è un'applicazione full-stack per la gestione di contenuti cinematografici, composta da un backend Laravel e un frontend Next.js.
+Full-stack movie & TV platform with community ratings and real-time chat.
+A Laravel REST API serves data from [TMDB](https://www.themoviedb.org/) to a Next.js frontend.
 
-## Architettura
+> **Status:** work in progress — see [`TODO.md`](TODO.md) for the roadmap.
 
-Il progetto utilizza Docker Compose per gestire tutti i servizi necessari:
+## Tech Stack
 
-- **Backend Laravel** (server): API REST per la gestione dei dati
-- **Frontend Next.js** (web): Interfaccia utente reattiva
-- **Database MySQL**: Persistenza dei dati
-- **Redis**: Caching e sessioni
-- **Reverb**: WebSocket per funzionalità in tempo reale
+| Layer    | Technologies |
+|----------|--------------|
+| Backend  | Laravel 12, PHP 8.5, Spatie Laravel Data, Sanctum (SPA auth), Reverb (WebSocket) |
+| Frontend | Next.js 16 (App Router, React Compiler), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query v5, Zustand |
+| Data     | MySQL 8.4, Redis 8 (cache, sessions, queues) |
+| Infra    | Docker Compose |
 
-## Requisiti
-
-- Docker e Docker Compose installati
-- Almeno 2GB di RAM disponibili
-
-## Come avviare il progetto
-
-1. **Clona il repository** (se non l'hai già fatto):
-
-   ```bash
-   git clone <repository-url>
-   cd CineBox
-   ```
-
-2. **Avvia tutti i servizi con Docker Compose**:
-
-   ```bash
-   docker compose up -d
-   ```
-
-3. **Attendi il completamento del build** (la prima volta può richiedere alcuni minuti).
-
-4. **Verifica che i servizi siano attivi**:
-
-   ```bash
-   docker compose ps
-   ```
-
-5. **Accedi alle applicazioni**:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - Database: localhost:3308 (utente: cinebox_user, password: cinebox_pass)
-   - Redis: localhost:6380
-
-## Struttura del progetto
+## Architecture
 
 ```
-CineBox/
-├── docker-compose.yml    # Configurazione Docker Compose
-├── server/              # Backend Laravel
-│   ├── app/            # Logica applicativa
-│   ├── database/       # Migrazioni e seeders
-│   ├── routes/         # Rotte API
-│   ├── resources/      # Viste e assets
-│   └── Dockerfile      # Configurazione container Laravel
-├── web/                # Frontend Next.js
-│   ├── app/           # Componenti React
-│   ├── public/        # Assets statici
-│   ├── package.json   # Dipendenze Node.js
-│   ├── next.config.ts # Configurazione Next.js
-|   └── Dockerfile      # Configurazione container Next.js
-└── README.md          # Questo file
+Browser ──► web (Next.js) ──► server (Laravel API) ──► TMDB API
+   │                              ├──► database (MySQL)
+   └──── client-side requests ───►├──► redis
+                                  └──► reverb (WebSocket)
 ```
 
-## Comandi utili
+| Service    | URL / Port                 |
+|------------|----------------------------|
+| `web`      | http://localhost:3000      |
+| `server`   | http://localhost:8000/api/v1 |
+| `database` | localhost:3308             |
+| `redis`    | localhost:6379             |
+| `reverb`   | localhost:8080             |
 
-- **Avvia i servizi**:
+## Getting Started
 
-  ```bash
-  docker compose up -d
-  ```
+### Prerequisites
+- Docker with Docker Compose
+- A TMDB **API Read Access Token** ([get one here](https://www.themoviedb.org/settings/api))
 
-- **Ferma i servizi**:
+### Setup
 
-  ```bash
-  docker compose down
-  ```
+```bash
+# 1. Clone the repository
+git clone git@github.com:Lorenzo-lesage/CIneBox.git cinebox
+cd cinebox
 
-- **Visualizza i log**:
+# 2. Create the environment files, then set TMDB_TOKEN in server/.env
+cp server/.env.example server/.env
+cp web/.env.example web/.env.local
 
-  ```bash
-  docker compose logs -f [servizio]
-  ```
+# 3. Build and start all services
+docker compose up -d --build
 
-- **Entra nel container del server**:
+# 4. Install PHP dependencies, generate the app key and run migrations
+docker compose exec server composer install
+docker compose exec server php artisan key:generate
+docker compose exec server php artisan migrate
+```
 
-  ```bash
-  docker compose exec server bash
-  ```
+Open http://localhost:3000.
 
-- **Entra nel container del frontend**:
-  ```bash
-  docker compose exec web bash
-  ```
+## Useful Commands
 
-## Configurazione iniziale
+```bash
+docker compose ps                      # services status
+docker compose logs -f <service>       # follow logs (server, web, reverb, ...)
+docker compose exec server sh          # shell inside the Laravel container
+docker compose exec web sh             # shell inside the Next.js container
+docker compose exec server php artisan route:list --path=api
+docker compose down                    # stop all services
+```
 
-Dopo il primo avvio, potrebbe essere necessario eseguire alcuni comandi di inizializzazione:
+## Project Structure
 
-1. **Installa le dipendenze PHP nel container del server**:
+```
+cinebox/
+├── server/              # Laravel API
+├── web/                 # Next.js frontend
+├── logo/                # brand assets
+├── docker-compose.yml
+├── CLAUDE.md            # collaboration, coding and git conventions
+└── TODO.md              # roadmap
+```
 
-   ```bash
-   docker compose exec server composer install
-   ```
+## Contributing
 
-2. **Genera la chiave dell'applicazione Laravel**:
-
-   ```bash
-   docker compose exec server php artisan key:generate
-   ```
-
-3. **Esegui le migrazioni del database**:
-
-   ```bash
-   docker compose exec server php artisan migrate
-   ```
-
-4. **Installa le dipendenze Node.js nel container del frontend**:
-
-   ```bash
-   docker compose exec web npm install
-   ```
-
-4. **Comando se ho errore di permessi in php**:
-   ```bash
-      #!/bin/bash
-   cd /opt/stacks/cinebox/server
-   sudo chown -R lorenzo:lorenzo .
-   sudo chmod -R 775 storage bootstrap/cache
-   sudo chmod 644 .env
-   echo "Permessi sistemati, apri VS Code ora."
-   ```
+Branching model, Conventional Commits and coding conventions are documented in
+[`CLAUDE.md`](CLAUDE.md#git-workflow).
 
 ## Troubleshooting
 
-- **Se i servizi non partono**: controlla che Docker sia in esecuzione
-- **Se ci sono errori di permessi**: assicurati che l'utente abbia i permessi necessari
-- **Se il frontend non si connette al backend**: verifica le variabili d'ambiente in `web/.env`
+**Permission errors on `storage/` or `bootstrap/cache/`** (bind-mounted volume):
 
-## Contatti
-
-Per supporto o domande, contatta l'amministratore del progetto.
+```bash
+cd server
+sudo chown -R "$USER":"$USER" .
+sudo chmod -R 775 storage bootstrap/cache
+```

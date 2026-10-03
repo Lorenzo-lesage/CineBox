@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Configuration\Exceptions;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return static function (Exceptions $exceptions): void {
 

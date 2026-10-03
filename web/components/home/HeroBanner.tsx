@@ -56,7 +56,7 @@ export function HeroBanner({
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+          src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
           alt="backdrop"
           fill
           className="object-cover transition-opacity duration-500"
@@ -67,13 +67,13 @@ export function HeroBanner({
         {/* 2. IL VIDEO APPARE SOLO QUANDO IL CLIENT È PRONTO */}
         {trailerKey && (
           <ReactPlayer
-            src={`https://www.youtube-nocookie.com/watch?v=${trailerKey}?vq=hd1080autoplay=1`}
+            src={`https://www.youtube-nocookie.com/watch?v=${trailerKey}&vq=hd1080autoplay=1`}
             playing
             muted={!isActive}
             loop
             width="100%"
             height="100%"
-            className="md:scale-140 scale-250"
+            className="md:scale-140 scale-220"
             controls={false}
           />
         )}

@@ -9,6 +9,7 @@ class WatchHistory extends Model
 {
     /**
      * Summary of fillable
+     *
      * @var array
      */
     protected $fillable = [
@@ -26,6 +27,7 @@ class WatchHistory extends Model
 
     /**
      * Summary of casts
+     *
      * @var array
      */
     protected $casts = [
@@ -36,6 +38,7 @@ class WatchHistory extends Model
     /**
      * Summary of comments
      * A comment belongs to a movie
+     *
      * @return BelongsTo<Movie, Comment>
      */
     public function movie(): BelongsTo
@@ -46,6 +49,7 @@ class WatchHistory extends Model
     /**
      * Summary of comments
      * A comment belongs to a user
+     *
      * @return BelongsTo<Movie, Comment>
      */
     public function user(): BelongsTo

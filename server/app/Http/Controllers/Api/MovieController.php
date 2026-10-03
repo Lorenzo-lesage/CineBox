@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movie;
-use Illuminate\Http\Request;
 use App\Services\TmdbServiceInterface;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -22,10 +22,11 @@ class MovieController extends Controller
 
         $endpoint = ($type === 'tv') ? 'discover/tv' : 'discover/movie';
 
-        $results = $this->tmdbService->getMoviesList($endpoint, [], $page, $sortBy);
+        $results = $this->tmdbService->getMediaList($endpoint, [], $page, 'en-US', $sortBy);
 
         return response()->json($results);
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -40,7 +41,7 @@ class MovieController extends Controller
     public function show(int $tmdbId, Request $request)
     {
         $type = $request->query('type', 'movie');
-        $movieData = $this->tmdbService->getMovie($tmdbId, 'en-US');
+        $movieData = $this->tmdbService->getMedia($tmdbId, $type, 'en-US');
 
         // 2. Check if we have local data (ratings, etc.)
         $localMovie = Movie::firstWhere('tmdb_id', $tmdbId);
@@ -69,20 +70,19 @@ class MovieController extends Controller
 
     /**
      * Summary of trailer
-     * @param int $id
-     * @param TmdbServiceInterface $tmdbService
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function trailer(int $id, TmdbServiceInterface $tmdbService)
+    public function trailer(string $type, int $id, TmdbServiceInterface $tmdbService)
     {
-        $trailerKey = $tmdbService->getMovieTrailer($id);
+        $trailerKey = $tmdbService->getMediaTrailer($id, $type);
 
-        if (!$trailerKey) {
+        if (! $trailerKey) {
             return response()->json(['message' => 'Trailer not found'], 404);
         }
 
         return response()->json([
-            'trailer_key' => $trailerKey
+            'trailer_key' => $trailerKey,
         ]);
     }
 }

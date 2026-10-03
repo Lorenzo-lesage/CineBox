@@ -9,6 +9,7 @@ class Rating extends Model
 {
     /**
      * Summary of fillable
+     *
      * @var array
      */
     protected $fillable = [
@@ -19,6 +20,7 @@ class Rating extends Model
 
     /**
      * Summary of casts
+     *
      * @var array
      */
     protected $casts = [
@@ -34,6 +36,7 @@ class Rating extends Model
     /**
      * Summary of user
      * Rate belongs to a user
+     *
      * @return BelongsTo<User, Rating>
      */
     public function user(): BelongsTo
@@ -44,6 +47,7 @@ class Rating extends Model
     /**
      * Summary of movie
      * Rate belongs to a movie
+     *
      * @return BelongsTo<Movie, Rating>
      */
     public function movie(): BelongsTo
