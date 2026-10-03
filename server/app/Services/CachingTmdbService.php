@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Data\MovieData;
 use App\Data\GenreMediaListData;
+use App\Data\MovieData;
 use Illuminate\Support\Facades\Cache;
 
 class CachingTmdbService implements TmdbServiceInterface
@@ -24,10 +24,8 @@ class CachingTmdbService implements TmdbServiceInterface
     /**
      * Get a movie from TMDB
      * Summary of getMovie
+     *
      * @see https://developers.themoviedb.org/3/movies/get-movie-details
-     * @param int $tmdbId
-     * @param string $lang
-     * @return MovieData
      */
     public function getMedia(int $tmdbId, string $type = 'movie', string $lang = 'en-US'): MovieData
     {
@@ -53,17 +51,12 @@ class CachingTmdbService implements TmdbServiceInterface
     /**
      * Get a list of movies from TMDB
      * Summary of getMoviesList
+     *
      * @see https://developers.themoviedb.org/3/discover/movie-discover
-     * @param string $endpoint
-     * @param array $params
-     * @param int $page
-     * @param string $lang
-     * @param string $sortBy
-     * @return array
      */
     public function getMediaList(string $endpoint, array $params = [], int $page = 1, string $lang = 'en-US', string $sortBy = 'popularity.desc'): array
     {
-        $cacheKey = "list_" . md5($endpoint . serialize($params) . $page . $lang . $sortBy);
+        $cacheKey = 'list_'.md5($endpoint.serialize($params).$page.$lang.$sortBy);
 
         return Cache::tags(['movies', 'lists'])->remember($cacheKey, now()->addHours(6), function () use ($endpoint, $lang, $params, $page, $sortBy) {
             return $this->inner->getMediaList($endpoint, $params, $page, $lang, $sortBy);
@@ -72,33 +65,18 @@ class CachingTmdbService implements TmdbServiceInterface
 
     /**
      * Summary of getSearchMediaList
-     * @param string $endpoint
-     * @param array $params
-     * @param int $page
-     * @param string $lang
-     * @param string $sortBy
-     * @return array
      */
     public function getSearchMediaList(string $endpoint, array $params = [], int $page = 1, string $lang = 'en-US', string $sortBy = 'popularity.desc'): array
     {
-        $cacheKey = "Search_" . md5($endpoint . serialize($params) . $page . $lang . $sortBy);
+        $cacheKey = 'Search_'.md5($endpoint.serialize($params).$page.$lang.$sortBy);
 
         return Cache::tags(['search'])->remember($cacheKey, now()->addHours(6), function () use ($endpoint, $lang, $params, $page, $sortBy) {
             return $this->inner->getSearchMediaList($endpoint, $params, $page, $lang, $sortBy);
         });
     }
 
-
     /**
      * Get a paginated media list from TMDB.
-     *
-     * @param string $endpoint
-     * @param array $params
-     * @param int $page
-     * @param string $lang
-     * @param string $sortBy
-     * @param array $genre
-     * @return GenreMediaListData
      */
     public function getPaginatedMediaList(
         string $endpoint,
@@ -108,8 +86,8 @@ class CachingTmdbService implements TmdbServiceInterface
         string $sortBy = 'popularity.desc',
         array $genre = [],
     ): GenreMediaListData {
-        $cacheKey = 'paginated_list_' . md5(
-            $endpoint . serialize($params) . $page . $lang . $sortBy . serialize($genre)
+        $cacheKey = 'paginated_list_'.md5(
+            $endpoint.serialize($params).$page.$lang.$sortBy.serialize($genre)
         );
 
         return Cache::tags(['movies', 'lists'])->remember($cacheKey, now()->addHours(6), function () use (
@@ -131,13 +109,11 @@ class CachingTmdbService implements TmdbServiceInterface
         });
     }
 
-
     /**
      * Get a movie trailer from TMDB
      * Summary of getMovieTrailer
+     *
      * @see https://developers.themoviedb.org/3/movies/get-movie-videos
-     * @param int $tmdbId
-     * @return string|null
      */
     public function getMediaTrailer(int $tmdbId, string $type = 'movie'): ?string
     {

@@ -3,17 +3,21 @@
 namespace App\Data;
 
 use App\Data\Traits\HasTmdbGenres;
-use Spatie\LaravelData\Data;
 use Illuminate\Support\Arr;
+use Spatie\LaravelData\Data;
 
 class MovieData extends Data
 {
     use HasTmdbGenres;
 
     private const MAX_CAST = 10;
+
     private const MAX_SIMILAR = 6;
+
     private const MAX_KEYWORDS = 5;
+
     private const DEFAULT_COUNTRY = 'US';
+
     private const ALT_COUNTRY = 'IT';
 
     public function __construct(
@@ -99,7 +103,7 @@ class MovieData extends Data
     private static function extractTrailer(array $data): ?string
     {
         return collect(Arr::get($data, 'videos.results', []))
-            ->first(fn($v) => $v['type'] === 'Trailer' && $v['site'] === 'YouTube')['key'] ?? null;
+            ->first(fn ($v) => $v['type'] === 'Trailer' && $v['site'] === 'YouTube')['key'] ?? null;
     }
 
     private static function extractDirector(array $data): ?string
@@ -112,7 +116,7 @@ class MovieData extends Data
     {
         return collect(Arr::get($data, 'credits.cast', []))
             ->take(self::MAX_CAST)
-            ->map(fn($c) => [
+            ->map(fn ($c) => [
                 'name' => $c['name'],
                 'character' => $c['character'],
                 'profile_path' => $c['profile_path'],
@@ -123,7 +127,7 @@ class MovieData extends Data
     {
         return collect(Arr::get($data, 'similar.results', []))
             ->take(self::MAX_SIMILAR)
-            ->map(fn($s) => [
+            ->map(fn ($s) => [
                 'id' => $s['id'],
                 'title' => $s['title'] ?? $s['name'] ?? 'Untitled',
                 'poster_path' => $s['poster_path'] ?? null,
@@ -141,7 +145,7 @@ class MovieData extends Data
     private static function extractWatchProviders(array $data): array
     {
         return collect(Arr::get($data, 'watch/providers.results.US.flatrate', []))
-            ->map(fn($p) => [
+            ->map(fn ($p) => [
                 'name' => $p['provider_name'],
                 'logo' => $p['logo_path'],
             ])->toArray();
@@ -150,21 +154,23 @@ class MovieData extends Data
     private static function extractProductionCompanies(array $data): array
     {
         return collect(Arr::get($data, 'production_companies', []))
-            ->map(fn($p) => [
+            ->map(fn ($p) => [
                 'name' => $p['name'],
-                'logo' => $p['logo_path'] ? "https://image.tmdb.org/t/p/w200" . $p['logo_path'] : null,
+                'logo' => $p['logo_path'] ? 'https://image.tmdb.org/t/p/w200'.$p['logo_path'] : null,
             ])->toArray();
     }
 
     private static function buildImdbUrl(array $data): ?string
     {
         $imdbId = $data['imdb_id'] ?? null;
+
         return $imdbId ? "https://www.imdb.com/title/{$imdbId}" : null;
     }
 
     private static function checkIfUpcoming(array $data): bool
     {
         $releaseDate = $data['release_date'] ?? $data['first_air_date'] ?? null;
+
         return ($data['status'] !== 'Released') ||
             ($releaseDate && strtotime($releaseDate) > time());
     }

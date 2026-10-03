@@ -4,10 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -60,6 +60,7 @@ class User extends Authenticatable
     /**
      * Summary of ratings
      * A user has many ratings
+     *
      * @return HasMany<Rating, User>
      */
     public function ratings(): HasMany
@@ -70,6 +71,7 @@ class User extends Authenticatable
     /**
      * Summary of comments
      * A user has many comments
+     *
      * @return HasMany<Comment, User>
      */
     public function comments(): HasMany
@@ -80,6 +82,7 @@ class User extends Authenticatable
     /**
      * Summary of favoriteMovies
      * Users that have this movie on favorites
+     *
      * @return BelongsToMany<Movie, User, \Illuminate\Database\Eloquent\Relations\Pivot>
      */
     public function favoriteMovies(): BelongsToMany
@@ -91,6 +94,7 @@ class User extends Authenticatable
     /**
      * Summary of watchHistories
      * A user has many watchHistories
+     *
      * @return HasMany<WatchHistory, User>
      */
     public function watchHistories(): HasMany

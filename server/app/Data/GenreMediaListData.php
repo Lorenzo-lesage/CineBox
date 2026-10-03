@@ -21,7 +21,7 @@ class GenreMediaListData extends Data
     {
         return new self(
             data: collect($payload['results'] ?? [])
-                ->map(fn(array $media) => MovieListData::fromTmdb($media)->toArray())
+                ->map(fn (array $media) => MovieListData::fromTmdb($media)->toArray())
                 ->values()
                 ->toArray(),
             current_page: (int) ($payload['page'] ?? 1),

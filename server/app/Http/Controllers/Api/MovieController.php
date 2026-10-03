@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movie;
-use Illuminate\Http\Request;
 use App\Services\TmdbServiceInterface;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -26,6 +26,7 @@ class MovieController extends Controller
 
         return response()->json($results);
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -69,20 +70,19 @@ class MovieController extends Controller
 
     /**
      * Summary of trailer
-     * @param int $id
-     * @param TmdbServiceInterface $tmdbService
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function trailer(string $type, int $id, TmdbServiceInterface $tmdbService)
     {
         $trailerKey = $tmdbService->getMediaTrailer($id, $type);
 
-        if (!$trailerKey) {
+        if (! $trailerKey) {
             return response()->json(['message' => 'Trailer not found'], 404);
         }
 
         return response()->json([
-            'trailer_key' => $trailerKey
+            'trailer_key' => $trailerKey,
         ]);
     }
 }

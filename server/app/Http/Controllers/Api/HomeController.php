@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\TmdbServiceInterface;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-
     public function __construct(
         protected TmdbServiceInterface $tmdbService
     ) {}
@@ -45,7 +44,7 @@ class HomeController extends Controller
             $upcomingEndpoint = ($type === 'movie') ? 'movie/upcoming' : 'tv/on_the_air';
             $response['upcoming'] = [
                 'label' => ($type === 'movie') ? 'Up coming' : 'On the air',
-                'data'  => $this->tmdbService->getMediaList($upcomingEndpoint, ['region' => 'IT'])
+                'data' => $this->tmdbService->getMediaList($upcomingEndpoint, ['region' => 'IT']),
             ];
         }
 
@@ -55,12 +54,14 @@ class HomeController extends Controller
                 $genreId = $genre[$type]; // Prende l'ID dinamico (movie o tv)
 
                 // Se il genere non esiste per questo tipo (es. Music per TV), lo saltiamo
-                if (!$genreId) continue;
+                if (! $genreId) {
+                    continue;
+                }
 
                 $response[$genre['key']] = [
                     'label' => $genre['label'],
                     'genreId' => $genreId,
-                    'data'  => $this->tmdbService->getMediaList("discover/{$type}", ['with_genres' => $genreId])
+                    'data' => $this->tmdbService->getMediaList("discover/{$type}", ['with_genres' => $genreId]),
                 ];
             }
         }
