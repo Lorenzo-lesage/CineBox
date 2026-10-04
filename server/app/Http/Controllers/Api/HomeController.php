@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\MediaType;
 use App\Http\Controllers\Controller;
 use App\Services\TmdbServiceInterface;
 use Illuminate\Http\Request;
@@ -15,45 +16,41 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(MediaType $type, Request $request)
     {
-        $type = $request->input('type', 'movie');
         $page = (int) $request->input('page', 1);
 
-        // Recuperiamo la lista intera dal file config
-        $allGenres = config('tmdb.genres');
-
-        // Dividiamo la lista in gruppi di 5
-        $genrePages = array_chunk($allGenres, 5);
+        // Genres are served in chunks of 5 so the home feed can load them lazily
+        $genrePages = array_chunk(config('tmdb.genres'), 5);
         $currentPageIndex = $page - 1;
 
         $response = [];
 
         if ($page === 1) {
-            $heroList = $this->tmdbService->getMediaList("trending/{$type}/week");
+            $heroList = $this->tmdbService->getMediaList("trending/{$type->value}/week");
+            shuffle($heroList);
+            $response['hero'] = $heroList;
 
-            if ($heroList instanceof \Illuminate\Support\Collection) {
-                $response['hero'] = $heroList->shuffle()->values()->all();
-            } else {
-                shuffle($heroList);
-                $response['hero'] = $heroList;
-            }
+            $response['popular'] = $this->tmdbService->getMediaList("{$type->value}/popular");
+            $response['top_rated'] = $this->tmdbService->getMediaList("{$type->value}/top_rated");
 
-            $response['popular'] = $this->tmdbService->getMediaList("{$type}/popular");
-            $response['top_rated'] = $this->tmdbService->getMediaList("{$type}/top_rated");
-            $upcomingEndpoint = ($type === 'movie') ? 'movie/upcoming' : 'tv/on_the_air';
+            // TMDB has no shared "upcoming" endpoint: each media type exposes its own
+            [$upcomingEndpoint, $upcomingLabel] = match ($type) {
+                MediaType::Movie => ['movie/upcoming', 'Upcoming'],
+                MediaType::Tv => ['tv/on_the_air', 'On the air'],
+            };
+
             $response['upcoming'] = [
-                'label' => ($type === 'movie') ? 'Up coming' : 'On the air',
+                'label' => $upcomingLabel,
                 'data' => $this->tmdbService->getMediaList($upcomingEndpoint, ['region' => 'IT']),
             ];
         }
 
-        // Carichiamo i 5 generi della pagina corrente
         if (isset($genrePages[$currentPageIndex])) {
             foreach ($genrePages[$currentPageIndex] as $genre) {
-                $genreId = $genre[$type]; // Prende l'ID dinamico (movie o tv)
+                $genreId = $genre[$type->value];
 
-                // Se il genere non esiste per questo tipo (es. Music per TV), lo saltiamo
+                // Some genres exist for only one media type (e.g. Music has no TV id)
                 if (! $genreId) {
                     continue;
                 }
@@ -61,7 +58,7 @@ class HomeController extends Controller
                 $response[$genre['key']] = [
                     'label' => $genre['label'],
                     'genreId' => $genreId,
-                    'data' => $this->tmdbService->getMediaList("discover/{$type}", ['with_genres' => $genreId]),
+                    'data' => $this->tmdbService->getMediaList("discover/{$type->value}", ['with_genres' => $genreId]),
                 ];
             }
         }

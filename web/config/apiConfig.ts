@@ -1,6 +1,6 @@
 export const apiConfig = {
   endpoints: {
-    home: (type: string, page: number) => `/home?type=${type}&page=${page}`,
+    home: (type: string, page: number) => `/${type}/home?page=${page}`,
     mediaDetails: (id: number, type: string) => `/${type}/${id}`,
     mediaTrailer: (type: string, id: number) => `/${type}/${id}/trailer`,
     genres: (type: string) => `/${type}/genres`,

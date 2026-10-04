@@ -18,12 +18,9 @@ Route::prefix('v1')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Home & Search
+    | Search
     |--------------------------------------------------------------------------
     */
-
-    Route::get('/home', [HomeController::class, 'index'])
-        ->name('home');
 
     Route::get('/search', [SearchController::class, 'search'])
         ->name('search');
@@ -38,12 +35,31 @@ Route::prefix('v1')->group(function () {
         ->whereIn('type', MediaType::cases())
         ->group(function () {
 
+            /*
+            |--------------------------------------------------------------------------
+            | Home
+            |--------------------------------------------------------------------------
+            */
+            Route::get('/home', [HomeController::class, 'index'])
+                ->name('home');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Genres
+            |--------------------------------------------------------------------------
+            */
             Route::get('/genres', [GenreController::class, 'index'])
                 ->name('genres.index');
 
             Route::get('/genres/{genreId}', [GenreController::class, 'media'])
                 ->whereNumber('genreId')
                 ->name('genres.media');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Media
+            |--------------------------------------------------------------------------
+            */
 
             Route::get('/{tmdbId}', [MovieController::class, 'show'])
                 ->whereNumber('tmdbId')
