@@ -5,7 +5,7 @@ Legend: `[ ]` todo · `[x]` done. Pace: ~10 h/week.
 ## Phase 0 — Setup & hygiene
 - [x] Align `dev` with `main`
 - [x] Add `CLAUDE.md`, track `TODO.md`, remove legacy tool files
-- [x] Protect `main` and `dev` on GitHub
+- [ ] Protect `main` and `dev` on GitHub (deferred)
 - [x] Align `server/.env.example` with MySQL / Redis / Sanctum
 - [x] Fix README (ports, setup, git workflow)
 - [x] Install Larastan and configure Pint
