@@ -1,3 +1,6 @@
+// Next
+import { notFound } from "next/navigation";
+
 // Fetch
 import { fetchPaginatedGenreMedia } from "@/services/movieService";
 
@@ -26,9 +29,11 @@ export default async function Page({ params, searchParams }: GenrePageProps) {
   |-------------------------------------------------------------------------
   */
 
+  if (type !== "movie" && type !== "tv") notFound();
+
   const initialData = await fetchPaginatedGenreMedia(
-    genreId,
     type,
+    genreId,
     page,
     sortBy,
   );

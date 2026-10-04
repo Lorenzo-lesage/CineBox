@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\MediaType;
 use App\Http\Controllers\Controller;
 use App\Services\TmdbServiceInterface;
 use Illuminate\Http\Request;
@@ -18,61 +19,39 @@ class GenreController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(string $type, Request $request)
+    public function index(MediaType $type)
     {
 
-        // Recuperiamo i generi dal file config/tmdb.php che abbiamo creato
+        // Retrieve the genres from the config/tmdb.php file we created
         $genres = config('tmdb.genres');
 
-        // Filtriamo per rimuovere i generi che non hanno un ID per quel tipo
-        // (es. 'Kids' non ha un ID movie, quindi lo nascondiamo se type=movie)
+        // Filter out genres that don't have an ID for the given media type
+        // (e.g. 'Kids' doesn't have a movie ID, so we hide it when type=movie)
         $filtered = array_filter($genres, function ($genre) use ($type) {
-            return ! is_null($genre[$type]);
+            return ! is_null($genre[$type->value]);
         });
 
-        // Usiamo array_values per resettare le chiavi dell'array dopo il filtro
+        // Use array_values to reset the array keys after filtering
         return response()->json(array_values($filtered));
-    }
-
-    /**
-     * Movies by genre
-     */
-    public function movies(string $type, int $genreId, Request $request)
-    {
-        $page = $request->input('page', 1);
-        $sortBy = $this->tmdbService->getSortValue($request->input('sort_by', 'popular'));
-
-        $endpoint = "discover/{$type}";
-
-        return response()->json(
-            $this->tmdbService->getMediaList(
-                $endpoint,
-                ['with_genres' => $genreId],
-                (int) $page,
-                'en-US',
-                $sortBy
-            )
-        );
     }
 
     /**
      * Paginated media by genre.
      */
-    public function paginatedMedia(string $type, string $genreId, Request $request)
+    public function media(MediaType $type, int $genreId, Request $request)
     {
         /*
         |--------------------------------------------------------------------------
         | Data
         |--------------------------------------------------------------------------
         */
-        $genreId = (int) $genreId;
         $page = (int) $request->input('page', 1);
         $sortBy = $this->tmdbService->getSortValue($request->input('sort_by', 'popular'));
-        $endpoint = "discover/{$type}";
+        $endpoint = "discover/{$type->value}";
 
         $genre = collect(config('tmdb.genres'))
             ->first(function (array $genre) use ($type, $genreId) {
-                return (int) ($genre[$type] ?? 0) === $genreId;
+                return (int) ($genre[$type->value] ?? 0) === $genreId;
             });
 
         /*
@@ -89,8 +68,8 @@ class GenreController extends Controller
                 'en-US',
                 $sortBy,
                 [
+                    'type' => $type->value,
                     'id' => $genreId,
-                    'type' => $type,
                     'key' => $genre['key'] ?? null,
                     'label' => $genre['label'] ?? null,
                 ],

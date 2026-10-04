@@ -72,7 +72,7 @@ export function MovieRow({
           <div className="flex items-center justify-between px-4 md:px-10">
             {genreId ? (
               <Link
-                href={`/genres/${type}/${genreId}`}
+                href={`/${type}/genres/${genreId}`}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity hover:underline group"
                 style={{ textShadow: "0px 0px 2px rgb(32, 3, 3)" }}
                 ref={linkRef}
@@ -156,45 +156,45 @@ export function MovieRow({
                 )}
               >
                 <Link
-                  href={`/genres/${type}/${genreId}`}
+                  href={`/${type}/genres/${genreId}`}
                   className="group h-45 block"
                 >
                   <div
                     className="
-        h-full rounded-lg
-        border border-dashed border-border
-        bg-background/40
-        group-hover:border-red-500/70
-        group-hover:bg-background
-        transition-all duration-200
-        flex flex-col items-center justify-center gap-3
-      "
+                    h-full rounded-lg
+                    border border-dashed border-border
+                    bg-background/40
+                    group-hover:border-red-500/70
+                    group-hover:bg-background
+                    transition-all duration-200
+                    flex flex-col items-center justify-center gap-3
+                  "
                   >
                     <div
                       className="
-          p-3 rounded-full
-          bg-background border border-border/40
-          group-hover:bg-red-500 group-hover:border-red-500
-          transition-all duration-200
-        "
+                      p-3 rounded-full  
+                      bg-background border border-border/40
+                      group-hover:bg-red-500 group-hover:border-red-500
+                      transition-all duration-200
+                    "
                     >
                       <ChevronRight
                         className="
-            w-5 h-5
-            text-muted-foreground
-            group-hover:text-white
-            transition-colors duration-200
-          "
+                        w-5 h-5
+                        text-muted-foreground
+                        group-hover:text-white
+                        transition-colors duration-200
+                      "
                       />
                     </div>
 
                     <span
                       className="
-          text-sm font-medium
-          text-muted-foreground/60
-          group-hover:text-foreground
-          transition-colors duration-200
-        "
+                      text-sm font-medium
+                      text-muted-foreground/60
+                      group-hover:text-foreground
+                      transition-colors duration-200
+                    "
                     >
                       See more
                     </span>

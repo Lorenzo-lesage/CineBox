@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
+use App\Enums\MediaType;
 use Illuminate\Support\Facades\Cache;
 
 class CachingTmdbService implements TmdbServiceInterface
@@ -27,21 +28,21 @@ class CachingTmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-details
      */
-    public function getMedia(int $tmdbId, string $type = 'movie', string $lang = 'en-US'): MovieData
+    public function getMedia(MediaType $type, int $tmdbId, string $lang = 'en-US'): MovieData
     {
-        $key = "movie_{$tmdbId}_{$type}_{$lang}";
+        $key = "movie_{$type->value}_{$tmdbId}_{$lang}";
         $cache = Cache::tags(['movies']);
 
         if ($cached = $cache->get($key)) {
             return $cached;
         }
 
-        return Cache::lock("lock_{$key}", 10)->block(5, function () use ($tmdbId, $type, $lang, $key, $cache) {
+        return Cache::lock("lock_{$key}", 10)->block(5, function () use ($type, $tmdbId, $lang, $key, $cache) {
             if ($cached = $cache->get($key)) {
                 return $cached;
             }
 
-            $movie = $this->inner->getMedia($tmdbId, $type, $lang);
+            $movie = $this->inner->getMedia($type, $tmdbId, $lang);
             $cache->put($key, $movie, now()->addDay());
 
             return $movie;
@@ -115,12 +116,12 @@ class CachingTmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-videos
      */
-    public function getMediaTrailer(int $tmdbId, string $type = 'movie'): ?string
+    public function getMediaTrailer(MediaType $type, int $tmdbId): ?string
     {
-        $key = "movie_trailer_{$tmdbId}_{$type}";
+        $key = "movie_trailer_{$type->value}_{$tmdbId}";
 
-        return Cache::remember($key, now()->addWeek(), function () use ($tmdbId, $type) {
-            return $this->inner->getMediaTrailer($tmdbId, $type);
+        return Cache::remember($key, now()->addWeek(), function () use ($type, $tmdbId) {
+            return $this->inner->getMediaTrailer($type, $tmdbId);
         });
     }
 }

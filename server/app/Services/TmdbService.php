@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
 use App\Data\MovieListData;
+use App\Enums\MediaType;
 use App\Exceptions\TmdbApiException;
 use Illuminate\Support\Facades\Http;
 
@@ -61,11 +62,11 @@ class TmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-details
      */
-    public function getMedia(int $tmdbId, string $type = 'movie', string $lang = 'en-US'): MovieData
+    public function getMedia(MediaType $type, int $tmdbId, string $lang = 'en-US'): MovieData
     {
         $appendToResponse = implode(',', self::MOVIE_APPEND);
 
-        $response = $this->request('GET', "/{$type}/{$tmdbId}", [
+        $response = $this->request('GET', "/{$type->value}/{$tmdbId}", [
             'language' => $lang,
             'append_to_response' => $appendToResponse,
         ]);
@@ -154,9 +155,9 @@ class TmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-videos
      */
-    public function getMediaTrailer(int $tmdbId, string $type = 'movie'): ?string
+    public function getMediaTrailer(MediaType $type, int $tmdbId): ?string
     {
-        $response = $this->request('GET', "/{$type}/{$tmdbId}/videos");
+        $response = $this->request('GET', "/{$type->value}/{$tmdbId}/videos");
 
         return collect($response->json('results'))
             ->where('site', 'YouTube')

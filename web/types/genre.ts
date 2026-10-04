@@ -33,7 +33,7 @@ export interface GenrePageClientProps {
 
 export interface GenrePageProps {
   params: Promise<{
-    type: MediaType;
+    type: string;
     genreId: string;
   }>;
   searchParams: Promise<{

@@ -4,14 +4,15 @@ namespace App\Services;
 
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
+use App\Enums\MediaType;
 
 interface TmdbServiceInterface
 {
-    public function getMedia(int $tmdbId, string $type = 'movie', string $lang = 'en-US'): MovieData;
+    public function getMedia(MediaType $type, int $tmdbId, string $lang = 'en-US'): MovieData;
 
     public function getMediaList(string $endpoint, array $params = [], int $page = 1, string $lang = 'en-US', string $sortBy = 'popularity.desc'): array;
 
-    public function getMediaTrailer(int $tmdbId, string $type = 'movie'): ?string;
+    public function getMediaTrailer(MediaType $type, int $tmdbId): ?string;
 
     public function getSortValue(string $sortKey): string;
 
