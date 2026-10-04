@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
 use App\Data\MovieListData;
+use App\Enums\MediaType;
+use App\Enums\SortOption;
 use App\Exceptions\TmdbApiException;
 use Illuminate\Support\Facades\Http;
 
@@ -40,19 +42,22 @@ class TmdbService implements TmdbServiceInterface
     /**
      * Get the sort value based on the provided key
      */
-    public function getSortValue(string $sortKey): string
+    public function getSortValue(SortOption $sort, MediaType $type): string
     {
-        $allowedSorts = [
-            'popular' => 'popularity.desc',
-            'top_rated' => 'vote_average.desc',
-            'latest' => 'release_date.desc',
-            'newest' => 'primary_release_date.desc',
-            'oldest' => 'primary_release_date.asc',
-            'title_az' => 'title.asc',
-            'title_za' => 'title.desc',
-        ];
+        // Movies and TV shows expose different date and title fields on /discover
+        [$dateField, $titleField] = match ($type) {
+            MediaType::Movie => ['primary_release_date', 'title'],
+            MediaType::Tv => ['first_air_date', 'name'],
+        };
 
-        return $allowedSorts[$sortKey] ?? $allowedSorts['popular'];
+        return match ($sort) {
+            SortOption::Popular => 'popularity.desc',
+            SortOption::TopRated => 'vote_average.desc',
+            SortOption::Newest => "{$dateField}.desc",
+            SortOption::Oldest => "{$dateField}.asc",
+            SortOption::TitleAz => "{$titleField}.asc",
+            SortOption::TitleZa => "{$titleField}.desc",
+        };
     }
 
     /**
@@ -61,11 +66,11 @@ class TmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-details
      */
-    public function getMedia(int $tmdbId, string $type = 'movie', string $lang = 'en-US'): MovieData
+    public function getMedia(MediaType $type, int $tmdbId, string $lang = 'en-US'): MovieData
     {
         $appendToResponse = implode(',', self::MOVIE_APPEND);
 
-        $response = $this->request('GET', "/{$type}/{$tmdbId}", [
+        $response = $this->request('GET', "/{$type->value}/{$tmdbId}", [
             'language' => $lang,
             'append_to_response' => $appendToResponse,
         ]);
@@ -154,9 +159,9 @@ class TmdbService implements TmdbServiceInterface
      *
      * @see https://developers.themoviedb.org/3/movies/get-movie-videos
      */
-    public function getMediaTrailer(int $tmdbId, string $type = 'movie'): ?string
+    public function getMediaTrailer(MediaType $type, int $tmdbId): ?string
     {
-        $response = $this->request('GET', "/{$type}/{$tmdbId}/videos");
+        $response = $this->request('GET', "/{$type->value}/{$tmdbId}/videos");
 
         return collect($response->json('results'))
             ->where('site', 'YouTube')

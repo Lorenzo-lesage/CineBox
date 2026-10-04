@@ -3,6 +3,7 @@ import { apiConfig } from "../config/apiConfig";
 
 // Type
 import type { SearchMediaResponse } from "@/types/search";
+import type { MediaType } from "@/types/movie";
 
 /**
  * Fetch Home page data
@@ -10,7 +11,7 @@ import type { SearchMediaResponse } from "@/types/search";
  * @param page
  * @returns
  */
-export const fetchHomeData = async (type: "movie" | "tv", page: number = 1) => {
+export const fetchHomeData = async (type: MediaType, page: number = 1) => {
   const response = await axiosClient.get(apiConfig.endpoints.home(type, page));
   return response.data;
 };
@@ -20,41 +21,25 @@ export const fetchHomeData = async (type: "movie" | "tv", page: number = 1) => {
  * @param id
  * @returns
  */
-export const fetchMediaTrailer = async (id: number, type: "movie" | "tv") => {
+export const fetchMediaTrailer = async (type: MediaType, id: number) => {
   const response = await axiosClient.get(
-    apiConfig.endpoints.mediaTrailer(id, type),
+    apiConfig.endpoints.mediaTrailer(type, id),
   );
   return response.data;
 };
 
-/**
- * Fetch movies by genre
- * @param genreId
- * @param page
- * @returns
- */
-export const fetchGenreMedia = async (
-  genreId: string | number,
-  type: "movie" | "tv",
-  page: number = 1,
-) => {
-  const response = await axiosClient.get(
-    apiConfig.endpoints.mediasByGenre(genreId, type, page),
-  );
-  return response.data;
-};
 
 /**
  * Fetch paginated media by genre
- * @param genreId
  * @param type
+ * @param genreId
  * @param page
  * @param sortBy
  * @returns
  */
 export const fetchPaginatedGenreMedia = async (
+  type: MediaType,
   genreId: string | number,
-  type: "movie" | "tv",
   page: number = 1,
   sortBy: string = "popular",
 ) => {

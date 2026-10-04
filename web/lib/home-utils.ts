@@ -6,17 +6,17 @@ export async function getHeroTrailers(movieId?: number, tvId?: number) {
 
   if (movieId) {
     try {
-      movieTrailer = await fetchMediaTrailer(movieId, "movie");
+      movieTrailer = await fetchMediaTrailer("movie", movieId);
     } catch (error) {
-      console.warn("Movie trailer non trovato, uso fallback statico.", error);
+      console.warn("Movie trailer not found, using fallback static.", error);
     }
   }
 
   if (tvId) {
     try {
-      tvTrailer = await fetchMediaTrailer(tvId, "tv");
+      tvTrailer = await fetchMediaTrailer("tv", tvId);
     } catch (error) {
-      console.warn("TV trailer non trovato, uso fallback statico.", error);
+      console.warn("TV trailer not found, using fallback static.", error);
     }
   }
 

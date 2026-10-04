@@ -36,7 +36,7 @@ export function MovieCard({ movie, rowStyle = "default", type }: MovieCardProps)
   const [showVideo, setShowVideo] = useState(false);
   const { playerRef, forceMute } = useMute(true);
   const { activeVideoId, setActiveVideoId } = useAudioStore();
-  const cardUniqueId = `card-${movie.id}-${type}`;
+  const cardUniqueId = `card-${type}-${movie.id}`;
   const isActive = activeVideoId === cardUniqueId;
 
   /*
@@ -47,8 +47,8 @@ export function MovieCard({ movie, rowStyle = "default", type }: MovieCardProps)
   | Once enabled, the query is cached for 30 minutes.
   */
   const { data: trailerData } = useQuery({
-    queryKey: ["trailer", movie.id, type],
-    queryFn: () => fetchMediaTrailer(movie.id, type),
+    queryKey: ["trailer", type, movie.id],
+    queryFn: () => fetchMediaTrailer(type, movie.id),
     enabled: isHovered,
     staleTime: 1000 * 60 * 30,
   });

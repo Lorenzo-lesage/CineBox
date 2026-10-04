@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MediaType;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\MovieController;
@@ -17,58 +18,57 @@ Route::prefix('v1')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Home
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/home', [HomeController::class, 'index'])
-        ->name('home');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Movies
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('movies')->group(function () {
-
-        // Movie detail
-        Route::get('/{tmdbId}', [MovieController::class, 'show'])
-            ->name('movies.show');
-    });
-
-    // Movie trailer
-    Route::get('/{type}/{id}/trailer', [MovieController::class, 'trailer'])->name('movies.trailer');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Genres
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('genres')->group(function () {
-
-        // / Index of genres
-        Route::get('/Genres/{type}', [GenreController::class, 'index'])
-            ->name('genres.index');
-
-        // Movies by genre
-        Route::get('/{genreId}/{type}', [GenreController::class, 'movies'])
-            ->name('genres.movies');
-
-        // Movies by genre paginated
-        Route::get('/{type}/{genreId}/paginated', [GenreController::class, 'paginatedMedia'])
-            ->name('genres.paginated');
-    });
-
-    /*
-    |--------------------------------------------------------------------------
     | Search
     |--------------------------------------------------------------------------
     */
 
     Route::get('/search', [SearchController::class, 'search'])
         ->name('search');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Media (scoped by type: movie | tv)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('{type}')
+        ->whereIn('type', MediaType::cases())
+        ->group(function () {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Home
+            |--------------------------------------------------------------------------
+            */
+            Route::get('/home', [HomeController::class, 'index'])
+                ->name('home');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Genres
+            |--------------------------------------------------------------------------
+            */
+            Route::get('/genres', [GenreController::class, 'index'])
+                ->name('genres.index');
+
+            Route::get('/genres/{genreId}', [GenreController::class, 'media'])
+                ->whereNumber('genreId')
+                ->name('genres.media');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Media
+            |--------------------------------------------------------------------------
+            */
+
+            Route::get('/{tmdbId}', [MovieController::class, 'show'])
+                ->whereNumber('tmdbId')
+                ->name('media.show');
+
+            Route::get('/{tmdbId}/trailer', [MovieController::class, 'trailer'])
+                ->whereNumber('tmdbId')
+                ->name('media.trailer');
+        });
 });
 
 /*

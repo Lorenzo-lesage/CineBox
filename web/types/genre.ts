@@ -3,7 +3,6 @@ import { Movie, MediaType } from "./movie";
 export type GenreSortValue =
   | "popular"
   | "top_rated"
-  | "latest"
   | "newest"
   | "oldest"
   | "title_az"
@@ -33,11 +32,11 @@ export interface GenrePageClientProps {
 
 export interface GenrePageProps {
   params: Promise<{
-    type: MediaType;
+    type: string;
     genreId: string;
   }>;
   searchParams: Promise<{
     page?: string;
-    sort_by?: GenreSortValue;
+    sort_by?: string;
   }>;
 }
