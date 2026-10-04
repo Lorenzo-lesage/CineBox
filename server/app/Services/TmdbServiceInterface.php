@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
 use App\Enums\MediaType;
+use App\Enums\SortOption;
 
 interface TmdbServiceInterface
 {
@@ -14,7 +15,7 @@ interface TmdbServiceInterface
 
     public function getMediaTrailer(MediaType $type, int $tmdbId): ?string;
 
-    public function getSortValue(string $sortKey): string;
+    public function getSortValue(SortOption $sort, MediaType $type): string;
 
     public function getPaginatedMediaList(
         string $endpoint,

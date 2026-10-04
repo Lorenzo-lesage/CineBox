@@ -10,6 +10,9 @@ import GenrePageClient from "@/components/genres/GenrePageClient";
 // Types
 import { GenrePageProps } from "@/types/genre";
 
+// Options
+import { sortOptions } from "@/lib/sortOptions";
+
 export default async function Page({ params, searchParams }: GenrePageProps) {
   /*
   | -------------------------------------------------------------------------
@@ -21,7 +24,9 @@ export default async function Page({ params, searchParams }: GenrePageProps) {
   const resolvedSearchParams = await searchParams;
 
   const page = Number(resolvedSearchParams.page ?? "1");
-  const sortBy = resolvedSearchParams.sort_by ?? "popular";
+  const rawSort = resolvedSearchParams.sort_by;
+  const sortBy =
+    sortOptions.find((option) => option.value === rawSort)?.value ?? "popular";
 
   /*
   | -------------------------------------------------------------------------

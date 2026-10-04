@@ -6,6 +6,7 @@ use App\Data\GenreMediaListData;
 use App\Data\MovieData;
 use App\Data\MovieListData;
 use App\Enums\MediaType;
+use App\Enums\SortOption;
 use App\Exceptions\TmdbApiException;
 use Illuminate\Support\Facades\Http;
 
@@ -41,19 +42,22 @@ class TmdbService implements TmdbServiceInterface
     /**
      * Get the sort value based on the provided key
      */
-    public function getSortValue(string $sortKey): string
+    public function getSortValue(SortOption $sort, MediaType $type): string
     {
-        $allowedSorts = [
-            'popular' => 'popularity.desc',
-            'top_rated' => 'vote_average.desc',
-            'latest' => 'release_date.desc',
-            'newest' => 'primary_release_date.desc',
-            'oldest' => 'primary_release_date.asc',
-            'title_az' => 'title.asc',
-            'title_za' => 'title.desc',
-        ];
+        // Movies and TV shows expose different date and title fields on /discover
+        [$dateField, $titleField] = match ($type) {
+            MediaType::Movie => ['primary_release_date', 'title'],
+            MediaType::Tv => ['first_air_date', 'name'],
+        };
 
-        return $allowedSorts[$sortKey] ?? $allowedSorts['popular'];
+        return match ($sort) {
+            SortOption::Popular => 'popularity.desc',
+            SortOption::TopRated => 'vote_average.desc',
+            SortOption::Newest => "{$dateField}.desc",
+            SortOption::Oldest => "{$dateField}.asc",
+            SortOption::TitleAz => "{$titleField}.asc",
+            SortOption::TitleZa => "{$titleField}.desc",
+        };
     }
 
     /**

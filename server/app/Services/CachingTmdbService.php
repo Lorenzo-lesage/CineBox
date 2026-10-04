@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Data\GenreMediaListData;
 use App\Data\MovieData;
 use App\Enums\MediaType;
+use App\Enums\SortOption;
 use Illuminate\Support\Facades\Cache;
 
 class CachingTmdbService implements TmdbServiceInterface
@@ -16,10 +17,10 @@ class CachingTmdbService implements TmdbServiceInterface
         $this->inner = $inner;
     }
 
-    public function getSortValue(string $sortKey): string
+    public function getSortValue(SortOption $sort, MediaType $type): string
     {
         // No cache needed for a simple mapping
-        return $this->inner->getSortValue($sortKey);
+        return $this->inner->getSortValue($sort, $type);
     }
 
     /**

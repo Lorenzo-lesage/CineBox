@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\MediaType;
+use App\Enums\SortOption;
 use App\Http\Controllers\Controller;
 use App\Services\TmdbServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class GenreController extends Controller
 {
@@ -46,7 +48,13 @@ class GenreController extends Controller
         |--------------------------------------------------------------------------
         */
         $page = (int) $request->input('page', 1);
-        $sortBy = $this->tmdbService->getSortValue($request->input('sort_by', 'popular'));
+        $request->validate([
+            'sort_by' => ['sometimes', Rule::enum(SortOption::class)],
+        ]);
+
+        $sort = $request->enum('sort_by', SortOption::class) ?? SortOption::Popular;
+        $sortBy = $this->tmdbService->getSortValue($sort, $type);
+
         $endpoint = "discover/{$type->value}";
 
         $genre = collect(config('tmdb.genres'))
