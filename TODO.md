@@ -11,7 +11,7 @@ Legend: `[ ]` todo · `[x]` done. Pace: ~10 h/week.
 - [x] Install Larastan and configure Pint
 
 ## Phase 1 — Backend consolidation
-- [ ] `MediaType` and `SortOption` enums; routes rewritten with enum binding, all under `v1`
+- [x] `MediaType` and `SortOption` enums; routes rewritten with enum binding, all under `v1`
 - [ ] `TmdbService`: single configured HTTP client, smart retry, `TmdbApiException` rendered as JSON
 - [ ] Fix `watch/providers` append and `checkIfUpcoming` null access
 - [ ] Cache raw TMDB payloads; language from config; memoized genre map
